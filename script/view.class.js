@@ -387,34 +387,34 @@
 
 					})
 
-
-
-					that.paintPoint(that, landPoints, that.temporaryPolygon['polygon']);
-
-					//清除上一个坐标点
-					$(that.deletePoint).on('click', function(event) {
-						
-						var lastmarker = that.temporaryPolygon['polygon'].pop();
-						if(lastmarker)
-							that.oMap.removeOverlay(lastmarker);
-						landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
-						
-						event.preventDefault();
-					});
-					//清除坐标集
-					$(that.deletePoints).on('click', function(event) {
-						
-						that.temporaryPolygon['polygon'].map(function(item,idx){
-							that.oMap.removeOverlay(item);
-						});
-
-						that.temporaryPolygon['polygon'].length = 0
-						landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
-						event.preventDefault();
-					});
-
 				}
 
+
+				that.paintPoint(that, landPoints, that.temporaryPolygon['polygon']);
+
+				//清除上一个坐标点
+				$(that.deletePoint).on('click', function(event) {
+					
+					var lastmarker = that.temporaryPolygon['polygon'].pop();
+					if(lastmarker)
+						that.oMap.removeOverlay(lastmarker);
+					landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
+					
+					event.preventDefault();
+				});
+				//清除坐标集
+				$(that.deletePoints).on('click', function(event) {
+					
+					that.temporaryPolygon['polygon'].map(function(item,idx){
+						that.oMap.removeOverlay(item);
+					});
+
+					that.temporaryPolygon['polygon'].length = 0
+					landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
+					event.preventDefault();
+				});
+
+				
 				event.preventDefault();
 			});
 
