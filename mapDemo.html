@@ -84,21 +84,13 @@
 					<div class="col-md-8 map-right">
 						<div class="map-handle row">
 							<div class="col-md-12">
-		                    	<button class="btn btn-danger" id="filebtn"><i class="fa fa-folder-open-o" ></i>选择图片
-		                        	<input type="file" class="btn btn-danger imgflie" value="上传图片" id="fileimg">
-		                        </button>
+
 	                        	<div class="btn-group" data-toggle="buttons" id="map-handle">
 	                            	<label class="btn btn-default" id="fixedmap">
 	                                		<input type="radio" name="options"> <i class="fa fa-hand-o-up"></i> 固定地图
 	                            	</label>
-	                            	<label class="btn btn-default" id="liftmap">
-	                               		<input type="radio" name="options"> <i class="fa fa-hand-o-up"></i> 解除固定
-	                            	</label>
-	                           		<label class="btn btn-default" id="">
-	                                	<input type="radio" name="options" id="paint-point"> <i class="fa fa-map-marker"></i> 添加标记
-	                            	</label>
 	                        	</div>
-	                        	<button class="btn btn-danger" id="delete-point"><i class="fa fa-times"></i> 清除中心点</button>
+	                        	<button class="btn btn-danger" id="delete-point"><i class="fa fa-times"></i> 清除上一个坐标点</button>
 	                        	<button class="btn btn-danger" id="delete-points"><i class="fa fa-times"></i> 清除坐标集</button>
 		                    </div>
 						</div>
@@ -135,7 +127,6 @@
 			</tr>
 		</script>
 		<!--模板结束 -->
-		<script src="http://localhost:35737/livereload.js?snipver=1" type="text/javascript"></script>
 		<script src="script/lib/jquery-1.11.0.min.js"></script>
 		<script src="http://api.map.baidu.com/api?v=2.0&ak=B36MAxRdlGXlb9SFmp6BYCGt"></script>
 		<script src="script/view.class.js"></script>

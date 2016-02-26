@@ -1,6 +1,6 @@
 var config = {
 	initUrl :{
-		getMapData : 'service/getData.php'
+		getMapData : 'service/getData.json'
 	},
 };
 (function( con, $, V, C, M){

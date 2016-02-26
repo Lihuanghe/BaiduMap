@@ -19,7 +19,7 @@
 
 		this.selfList = document.getElementById('self-list'); //列表
 
-		this.deletePoint = document.getElementById('delete-point'); //删除中心点
+		this.deletePoint = document.getElementById('delete-point'); //删除上一坐标点
 
 		this.deletePoints = document.getElementById('delete-points'); //删除坐标集
 
@@ -36,15 +36,13 @@
 			imageOffset: new BMap.Size( -0, -(10*25) )
 		}); //自定义icon图标
 
-		this.pointBtn = document.getElementById('paint-point'); //描点模式,点击开启。
-
 		this.mapConfig = {
 
 			defaultCity: '重庆',
 
 			defaultZoom: 9,
 
-			defaultMapType: BMAP_HYBRID_MAP,
+			defaultMapType: BMAP_NORMAL_MAP,
 
 			defaultMapId: 'map-container',
 
@@ -102,20 +100,6 @@
 			$( dataCon ).tmpl( tmpData ).appendTo('.data-container');
 
 		},
-		fileClick: function(){
-
-			var that = this,
-
-				fileBtn = document.getElementById('filebtn'), //触发input[type=file]的按钮
-
-				file = document.getElementById('fileimg'); //input[type=file]
-
-			$(fileBtn).on('click', function(event) {
-
-				file.click();
-
-			});
-		},
 		backToList: function(){
 
 			var that = this,
@@ -126,6 +110,12 @@
 
 				if(that.prevPoly) that.oMap.removeOverlay(that.prevPoly);
 
+				if(that.temporaryPolygon['marker'])
+					that.oMap.removeOverlay(that.temporaryPolygon['marker']);
+
+				that.temporaryPolygon['polygon'].map(function(item,idx){
+							that.oMap.removeOverlay(item);
+						});
 				that.oMap.reset();
 
 				that.selfList.style.display = 'block';
@@ -133,6 +123,10 @@
 				that.singleDetail.style.display = 'none';
 
 				that.isPaint = false;
+
+				$(that.deletePoint).unbind();
+				$(that.deletePoints).unbind()
+
 			});
 		},
 		selfHandle: function(obj,point,elem,ordata){ //dragend事件的处理处理程序
@@ -171,11 +165,7 @@
 		paintPoint: function(obj,input,data){ //描点开始
 
 			var that = obj;
-
-			$( that.pointBtn ).on( 'click', function(){
-
-				return that.mapClick.call(null, that, input, data);
-			} );
+			return that.mapClick.call(null, that, input, data);
 		},
 		mapClick: function(t,inp,da){  //地图点击事件
 
@@ -198,13 +188,10 @@
 					oMarker.setLabel(selfLabel);
 					
 					_that.oMap.addOverlay(oMarker);
-
+					_data.push(oMarker);
 					_input.value = _that.polygonToArray(_data);
 
 					oMarker.enableDragging();
-
-					_data.push(oMarker);
-
 					_that.selfDragend( oMarker, _input, _data.length - 1, _data );
 				}
 
@@ -354,11 +341,11 @@
 
 					that.oMap.removeOverlay(oldPlo);
 
-					tmpPos.map(function(index, elem) {
+					tmpPos.map(function( elem,index) {
 
-						var oMarker = new BMap.Marker(index);
+						var oMarker = new BMap.Marker(elem);
 
-						var selfLabel = new BMap.Label( elem );
+						var selfLabel = new BMap.Label( index );
 
 						selfLabel.setStyle( { display:'block', position:'absolute', padding: '5px', color: '#fff', backgroundColor:'transparent', border:'none',fontSize:'12px' } );
 
@@ -377,6 +364,28 @@
 					})
 
 					that.paintPoint(that, landPoints, that.temporaryPolygon['polygon']);
+
+					//清除上一个坐标点
+					$(that.deletePoint).on('click', function(event) {
+						
+						var lastmarker = that.temporaryPolygon['polygon'].pop();
+						if(lastmarker)
+							that.oMap.removeOverlay(lastmarker);
+						landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
+						
+						event.preventDefault();
+					});
+					//清除坐标集
+					$(that.deletePoints).on('click', function(event) {
+						
+						that.temporaryPolygon['polygon'].map(function(item,idx){
+							that.oMap.removeOverlay(item);
+						});
+
+						that.temporaryPolygon['polygon'].length = 0
+						landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
+						event.preventDefault();
+					});
 
 				}
 
@@ -403,42 +412,33 @@
 
 			$(fixedMap).on('click', function(event) {
 
-				that.isPaint = true; //描点模式开启
+				if(!that.isPaint){
+					that.isPaint = true; //描点模式开启
 
-				params.disableScrollWheelZoom();
+					params.disableScrollWheelZoom();
 
-				params.disableDoubleClickZoom();
+					params.disableDoubleClickZoom();
 
-				params.disableKeyboard();
+					params.disableKeyboard();
 
-				params.disableDragging();
+					params.disableDragging();
+					$(fixedMap).text('解除固定')
 
+				}else{
+					that.isPaint = false; //关闭描点模式
+
+					params.enableDoubleClickZoom()
+
+					params.enableDragging();
+
+					params.enableKeyboard();
+
+					params.enableScrollWheelZoom();
+					$(fixedMap).text('固定地图')
+
+				}
 				event.preventDefault();
 			});
-		},
-		mapLift: function(params){
-
-			if(!params) return;
-
-			var liftMap = document.getElementById('liftmap'),
-
-				that = this;
-
-			$(liftMap).on('click', function(event) {
-
-				that.isPaint = false; //关闭描点模式
-
-				params.enableDoubleClickZoom()
-
-				params.enableDragging();
-
-				params.enableKeyboard();
-
-				params.enableScrollWheelZoom();
-
-				event.preventDefault();
-			});
-
 		},
 		pageList : function( obj ){
 
@@ -587,6 +587,16 @@
 
 			return tmpPoint;
 		},
+		deletepoint:function(){
+			var  that = this;
+
+
+		},
+		deletepoints : function(){
+			var  that = this;
+
+
+		},
 		initMap : function( obj ){
 
 			var that = this,
@@ -607,13 +617,14 @@
 
 			that.oMap.enableKeyboard();
 
-			that.overlayPoly( obj, true );
+			//that.overlayPoly( obj, true );
 			
-			that.fileClick();
+			
+
 
 			that.mapFixed( that.oMap );
 
-			that.mapLift( that.oMap );
+
 
 			that.checkMap();
 
