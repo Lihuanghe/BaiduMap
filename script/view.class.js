@@ -29,6 +29,8 @@
 
 		this.temporaryPolygon = {}; //临时的编辑区域
 
+		this.mapclickhanler = null;
+
 		this.selfIcon = new BMap.Icon('style/images/markers.png', new BMap.Size(19,25),{
 
 			anchor: new BMap.Size( 10,25 ),
@@ -100,6 +102,16 @@
 			$( dataCon ).tmpl( tmpData ).appendTo('.data-container');
 
 		},
+		saveEditData:function(){
+			var that = this,
+			savedata = document.getElementById('savedata'); //保存数据
+
+			$(savedata).on('click', function(event) {
+				var tmpdata  = that.temporaryPolygon['polygon'] 
+				var curEditdom = that.temporaryPolygon['curEditdom'] ;
+				curEditdom.attr('data-points',that.polygonToArray(tmpdata));
+			});
+		},
 		backToList: function(){
 
 			var that = this,
@@ -112,10 +124,11 @@
 
 				if(that.temporaryPolygon['marker'])
 					that.oMap.removeOverlay(that.temporaryPolygon['marker']);
-
-				that.temporaryPolygon['polygon'].map(function(item,idx){
+				if(that.temporaryPolygon['polygon'])
+					that.temporaryPolygon['polygon'].map(function(item,idx){
 							that.oMap.removeOverlay(item);
 						});
+
 				that.oMap.reset();
 
 				that.selfList.style.display = 'block';
@@ -123,19 +136,25 @@
 				that.singleDetail.style.display = 'none';
 
 				that.isPaint = false;
+				
+
+
 
 				$(that.deletePoint).unbind();
 				$(that.deletePoints).unbind()
+				that.oMap.removeEventListener('click', that.mapclickhanler )
+				that.mapclickhanler = null
+
 
 			});
 		},
-		selfHandle: function(obj,point,elem,ordata){ //dragend事件的处理处理程序
+		selfHandle: function(obj,point,idx,ordata){ //dragend事件的处理处理程序
 
 			if( point.nodeName.toLowerCase() == 'input' ) point.value = obj.point.lng + ',' + obj.point.lat;
 
 			if( point.nodeName.toLowerCase() == 'textarea' ){
 
-				ordata[elem].setPosition(new BMap.Point(obj.point.lng, obj.point.lat));
+				ordata[idx].setPosition(new BMap.Point(obj.point.lng, obj.point.lat));
 
 				point.value = View.prototype.polygonToArray(ordata);
 
@@ -150,9 +169,9 @@
 
 			if(obj){
 
-				obj.map(function(index, elem) {
+				obj.map(function( elem,index) {
 					
-					pointsArray.push(index.getPosition().lng + ',' + index.getPosition().lat );
+					pointsArray.push(elem.getPosition().lng + ',' + elem.getPosition().lat );
 
 				})
 			}
@@ -172,30 +191,34 @@
 			var _that = t, //view对象
 				_input = inp, //textarea
 				_data = da; //临时的编辑区域
-			
-			_that.oMap.addEventListener('click', function(event){
+			if(!!!_that.mapclickhanler ){
+				_that.mapclickhanler = function(event){
 
-				if(_that.isPaint){
+					if(_that.isPaint){
 
-					var oMarker = new BMap.Marker( new BMap.Point( event.point.lng, event.point.lat ));
+						var oMarker = new BMap.Marker( new BMap.Point( event.point.lng, event.point.lat ));
 
-					var selfLabel = new BMap.Label( _data.length );
+						var selfLabel = new BMap.Label( _data.length );
 
-					selfLabel.setStyle( { display:'block', position:'absolute', padding: '5px', color: '#fff', backgroundColor:'transparent', border:'none',fontSize:'12px' } );
+						selfLabel.setStyle( { display:'block', position:'absolute', padding: '5px', color: '#fff', backgroundColor:'transparent', border:'none',fontSize:'12px' } );
 
-					if(_data.length >= 10) selfLabel.setOffset( new BMap.Size( -3,-1 ) );
+						if(_data.length >= 10) selfLabel.setOffset( new BMap.Size( -3,-1 ) );
 
-					oMarker.setLabel(selfLabel);
-					
-					_that.oMap.addOverlay(oMarker);
-					_data.push(oMarker);
-					_input.value = _that.polygonToArray(_data);
+						oMarker.setLabel(selfLabel);
+						
+						_that.oMap.addOverlay(oMarker);
+						_data.push(oMarker);
+						_input.value = _that.polygonToArray(_data);
 
-					oMarker.enableDragging();
-					_that.selfDragend( oMarker, _input, _data.length - 1, _data );
-				}
+						oMarker.enableDragging();
+						_that.selfDragend( oMarker, _input, _data.length - 1, _data );
+					}
 
-			})
+				};
+
+			_that.oMap.addEventListener('click', _that.mapclickhanler )
+			}
+
 		},
 		checkMap: function(){
 
@@ -275,7 +298,7 @@
 				landPoint  = document.getElementById('landpoint'), //中心点坐标
 
 				landPoints = document.getElementById('landpoints'); //坐标集
-
+			
 			$('body').on('click', '.mapedit', function(event) {
 
 				var dataCon = $(this).parent('div'),
@@ -294,6 +317,7 @@
 
 				that.isPaint = true;
 
+				that.temporaryPolygon['curEditdom'] = dataCon;
 				that.temporaryPolygon['marker'] = '';
 
 				that.temporaryPolygon['polygon'] = [];
@@ -349,7 +373,7 @@
 
 						selfLabel.setStyle( { display:'block', position:'absolute', padding: '5px', color: '#fff', backgroundColor:'transparent', border:'none',fontSize:'12px' } );
 
-						if(elem >= 10) selfLabel.setOffset( new BMap.Size( -3,-1 ) );
+						if(index >= 10) selfLabel.setOffset( new BMap.Size( -3,-1 ) );
 
 						oMarker.setLabel(selfLabel);
 						
@@ -359,9 +383,11 @@
 
 						that.temporaryPolygon['polygon'].push(oMarker);
 
-						that.selfDragend( oMarker, landPoints, elem, that.temporaryPolygon['polygon'] );
+						that.selfDragend( oMarker, landPoints, index, that.temporaryPolygon['polygon'] );
 
 					})
+
+
 
 					that.paintPoint(that, landPoints, that.temporaryPolygon['polygon']);
 
@@ -631,6 +657,7 @@
 			that.editMap();
 
 			that.backToList();
+			that.saveEditData();
 		}
 	};
 	window.View = view;
