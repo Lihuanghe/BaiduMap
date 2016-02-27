@@ -12,6 +12,7 @@
 		this.totalPage = $('#totalpage'); //一共多少页码
 
 		this.isPaint = false; //是否开启描点模式
+		this.isMapfixed = false;
 
 		this.prevPoly = ''; //上一次被查看的polygon
 
@@ -438,8 +439,8 @@
 
 			$(fixedMap).on('click', function(event) {
 
-				if(!that.isPaint){
-					that.isPaint = true; //描点模式开启
+				if(!that.isMapfixed){
+					that.isMapfixed = true; //描点模式开启
 
 					params.disableScrollWheelZoom();
 
@@ -451,7 +452,7 @@
 					$(fixedMap).text('解除固定')
 
 				}else{
-					that.isPaint = false; //关闭描点模式
+					that.isMapfixed = false; //关闭描点模式
 
 					params.enableDoubleClickZoom()
 
