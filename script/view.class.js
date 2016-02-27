@@ -614,16 +614,71 @@
 
 			return tmpPoint;
 		},
-		deletepoint:function(){
-			var  that = this;
-
-
+		_getZoomLevel : function(distance){
+			
 		},
-		deletepoints : function(){
-			var  that = this;
-
-
+		_getRectPoint: function(pArr){
+			var top,left, bottom,right;
+			
+			if(pArr){
+				top = pArr[1].getPosition().lng;
+				bottom = pArr[1].getPosition().lng;
+				left = pArr[1].getPosition().lat;
+				right = pArr[1].getPosition().lat;
+				pArr.map(function( elem,index) {
+					if(top < elem.getPosition().lng) top=elem.getPosition().lng;
+					if(bottom > elem.getPosition().lng) bottom = elem.getPosition().lng;
+					
+					if(left > elem.getPosition().lat )left = elem.getPosition().lat;
+					if(right < elem.getPosition().lat ) right = elem.getPosition().lat;
+					
+				})
+				return [left,top,right,bottom]
+			}
+			return ;
 		},
+    /**
+     * approx distance between two points on earth ellipsoid
+     * @param {Object} lat1
+     * @param {Object} lng1
+     * @param {Object} lat2
+     * @param {Object} lng2
+     */
+     _getFlatternDistance : function(lat1,lng1,lat2,lng2){
+		var EARTH_RADIUS = 6378137.0;    //单位M
+		var PI = Math.PI;
+		
+		var getRad=function(d){
+			return d*PI/180.0;
+		}
+		 
+        var f = getRad((lat1 + lat2)/2);
+        var g = getRad((lat1 - lat2)/2);
+        var l = getRad((lng1 - lng2)/2);
+        
+        var sg = Math.sin(g);
+        var sl = Math.sin(l);
+        var sf = Math.sin(f);
+        
+        var s,c,w,r,d,h1,h2;
+        var a = EARTH_RADIUS;
+        var fl = 1/298.257;
+        
+        sg = sg*sg;
+        sl = sl*sl;
+        sf = sf*sf;
+        
+        s = sg*(1-sl) + (1-sf)*sl;
+        c = (1-sg)*(1-sl) + sf*sl;
+        
+        w = Math.atan(Math.sqrt(s/c));
+        r = Math.sqrt(s*c)/w;
+        d = 2*w*a;
+        h1 = (3*r -1)/2/c;
+        h2 = (3*r +1)/2/s;
+        
+        return d*(1 + fl*(h1*sf*(1-sg) - h2*(1-sf)*sg));
+    },
 		initMap : function( obj ){
 
 			var that = this,
