@@ -226,15 +226,15 @@
 
 			var that = this,
 
-				landId = document.getElementById('landid'), //记录ID
+				schoolid = document.getElementById('schoolid'), //学校ID
 
-				landNum = document.getElementById('landnum'), //土地编号
+				areadesc = document.getElementById('areadesc'), //划片
 
-				landTitle = document.getElementById('landtitle'), //地理位置
+				schoolname = document.getElementById('schoolname'), //学校名称
 
-				landPoint  = document.getElementById('landpoint'), //中心点坐标
+				schoolpoint  = document.getElementById('schoolpoint'), //学校坐标
 
-				landPoints = document.getElementById('landpoints'); //坐标集
+				areapoints = document.getElementById('areapoints'); //划片坐标集
 
 			$('body').on('click', '.maplook', function(event) {
 
@@ -248,17 +248,17 @@
 
 					tmpTitle = dataCon.attr('data-title'),
 
-					tmpUrl = dataCon.attr('data-url');
+					tmpArea = dataCon.attr('data-area');
 
-				landId.value = tmpId;
+				schoolid.value = tmpId;
 
-				landNum.value = tmpUrl;
+				areadesc.value = tmpArea;
 
-				landTitle.value = tmpTitle; 
+				schoolname.value = tmpTitle; 
 
-				landPoint.value = tmpPoint;
+				schoolpoint.value = tmpPoint;
 
-				landPoints.value = tmpPoints;
+				areapoints.value = tmpPoints;
 
 				that.selfList.style.display = 'none';
 			
@@ -291,15 +291,15 @@
 
 			var that = this,
 
-				landId = document.getElementById('landid'), //记录ID
+				schoolid = document.getElementById('schoolid'), //学校ID
 
-				landNum = document.getElementById('landnum'), //土地编号
+				areadesc = document.getElementById('areadesc'), //划片
 
-				landTitle = document.getElementById('landtitle'), //地理位置
+				schoolname = document.getElementById('schoolname'), //学校名称
 
-				landPoint  = document.getElementById('landpoint'), //中心点坐标
+				schoolpoint  = document.getElementById('schoolpoint'), //学校坐标
 
-				landPoints = document.getElementById('landpoints'); //坐标集
+				areapoints = document.getElementById('areapoints'); //划片坐标集
 			
 			$('body').on('click', '.mapedit', function(event) {
 
@@ -313,7 +313,7 @@
 
 					tmpTitle = dataCon.attr('data-title'),
 
-					tmpUrl = dataCon.attr('data-url'),
+					tmpArea = dataCon.attr('data-area'),
 
 					markerIndex = 1;//坐标集开始坐标index
 
@@ -324,15 +324,15 @@
 
 				that.temporaryPolygon['polygon'] = [];
 
-				landId.value = tmpId;
+				schoolid.value = tmpId;
 
-				landNum.value = tmpUrl;
+				areadesc.value = tmpArea;
 
-				landTitle.value = tmpTitle; 
+				schoolname.value = tmpTitle; 
 
-				landPoint.value = tmpPoint;
+				schoolpoint.value = tmpPoint;
 
-				landPoints.value = tmpPoints;
+				areapoints.value = tmpPoints;
 
 				that.selfList.style.display = 'none';
 			
@@ -354,7 +354,7 @@
 
 					mPen.enableDragging();
 
-					that.selfDragend(mPen,landPoint);
+					that.selfDragend(mPen,schoolpoint);
 				}
 
 				if(tmpPoints){
@@ -385,14 +385,14 @@
 
 						that.temporaryPolygon['polygon'].push(oMarker);
 
-						that.selfDragend( oMarker, landPoints, index, that.temporaryPolygon['polygon'] );
+						that.selfDragend( oMarker, areapoints, index, that.temporaryPolygon['polygon'] );
 
 					})
 
 				}
 
 
-				that.paintPoint(that, landPoints, that.temporaryPolygon['polygon']);
+				that.paintPoint(that, areapoints, that.temporaryPolygon['polygon']);
 
 				//清除上一个坐标点
 				$(that.deletePoint).on('click', function(event) {
@@ -400,7 +400,7 @@
 					var lastmarker = that.temporaryPolygon['polygon'].pop();
 					if(lastmarker)
 						that.oMap.removeOverlay(lastmarker);
-					landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
+					areapoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
 					
 					event.preventDefault();
 				});
@@ -412,7 +412,7 @@
 					});
 
 					that.temporaryPolygon['polygon'].length = 0
-					landPoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
+					areapoints.value = that.polygonToArray(that.temporaryPolygon['polygon']);
 					event.preventDefault();
 				});
 
@@ -498,7 +498,7 @@
 
 			var nextBtn = $('#mapnext'),
 				that = this;
-
+			nextBtn.unbind();
 			nextBtn.on('click', function(event) {
 
 				if(that.currentPage == that.totalPage.html()){
@@ -524,6 +524,7 @@
 
 			var prevBtn =$('#mapprev'),
 				that = this;
+				prevBtn.unbind();
 			prevBtn.on('click', function(event) {
 
 				if(that.currentPage == 1){

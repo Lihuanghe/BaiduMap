@@ -41,6 +41,14 @@ var config = {
 		};
 
 		loadcitydata(config.initUrl.getMapData);
+
+		$('#city_select').on('click',function(){
+			var v = $('#city_search').val();
+			view.geocoder.getPoint(v,function(point){
+          		$('#latlng').text('经纬度：'+point.lng+','+point.lat)
+			 	view.oMap.centerAndZoom( point, 16 );
+			});
+		});
 	
 	   $('#city_search').typeahead({
 	      source: function(query, process) {
@@ -71,7 +79,7 @@ var config = {
 	                })
 	          }	,
 	          updater: function (item) {
-	          		
+
 		          	view.geocoder.getPoint(item.name,function(point){
 		          		$('#latlng').text('经纬度：'+point.lng+','+point.lat)
 					 	view.oMap.centerAndZoom( point, 12 );
