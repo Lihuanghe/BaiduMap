@@ -37,5 +37,41 @@ var config = {
 
 		}
 	})
+	   $('#city_search').typeahead({
+	      source: function(query, process) {
+	      	
+	         return cities;
+	      },
+	      matcher: function (item) {
+	      	
+	            return ~item.label.toLowerCase().indexOf(this.query.toLowerCase())
+	      },
+	      sorter: function (items) {
+	            var beginswith = []
+	              , caseSensitive = []
+	              , caseInsensitive = []
+	              , item
+
+	            while (item = items.shift()) {
+	              if (!item.label.toLowerCase().indexOf(this.query.toLowerCase())) beginswith.push(item)
+	              else if (~item.label.indexOf(this.query)) caseSensitive.push(item)
+	              else caseInsensitive.push(item)
+	            }
+
+	            return beginswith.concat(caseSensitive, caseInsensitive)
+	         }	,
+	        highlighter: function (item) {
+	                var query = this.query.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+	                return item.label.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+	                  return '<strong>' + match + '</strong>'
+	                })
+	          }	,
+	          updater: function (item) {
+		          	view.geocoder.getPoint(item.name,function(point){
+					 	view.oMap.centerAndZoom( point, 12 );
+					});
+	               return item.name
+	             }     
+	   });
 	
 })( config, jQuery, View, Control, Model)

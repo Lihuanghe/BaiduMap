@@ -32,6 +32,8 @@
 
 		this.mapclickhanler = null;
 
+		this.geocoder = new BMap.Geocoder();
+
 		this.selfIcon = new BMap.Icon('style/images/markers.png', new BMap.Size(19,25),{
 
 			anchor: new BMap.Size( 10,25 ),

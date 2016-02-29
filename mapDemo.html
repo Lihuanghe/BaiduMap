@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" >
 		<title>Require</title>
-		<link rel="stylesheet" type="text/css" href="style/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="style/css/font-awesome.min.css">
 		<link rel="stylesheet" href="style/css/map.css">
 		<link rel="shortcut icon" href="map.ico">
@@ -13,6 +13,19 @@
 	<body>
 		<div id="wrap">
 			<div class="container-fluid">
+				<div class="row">
+					
+					<div class="col-md-4" >
+						<label for="school_search">搜索学校名称: </label>
+						<input id="school_search" type="text" >
+					</div>
+					<div class="col-md-4" >
+						
+						<label for="city_search">选择城市: </label>
+						<input id="city_search" type="text" >
+						<button class="btn btn-sm " id="city_select" ><i class="fa fa-search" ></i></button>
+					</div>
+				</div>
 				<div class="row">
 					<div class="col-md-4 map-left" id="self-list">
 						<table class="table table-bordered table-hover">
@@ -127,21 +140,26 @@
 			</tr>
 		</script>
 		<!--模板结束 -->
-		<script src="script/lib/jquery-1.11.0.min.js"></script>
+		<script src="//cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
 		<script src="https://api.map.baidu.com/api?v=2.0&ak=B36MAxRdlGXlb9SFmp6BYCGt"></script>
+		<script src="script/lib/jquery.tmpl.min.js"></script>
+		<script src="//cdn.bootcss.com/bootstrap/2.3.1/js/bootstrap.min.js"></script>
+		<script src="script/lib/bootstrap-typeahead.js"></script>
+
+		<script src="script/city.js"></script>
 		<script src="script/view.class.js"></script>
 		<script src="script/control.class.js"></script>
 		<script src="script/model.class.js"></script>
 		<script src="script/main.class.js"></script>
-		<script src="script/lib/jquery.tmpl.min.js"></script>
+
 		<script type="text/javascript">
-			$( function(){
-				if( window.localStorage ){
+			$(document).ready(function($) {
+   				if( window.localStorage ){
 					console.log( 'Your Browser is truely support the HTML5 localStorage API' );
 				}else{
 					console.log( "I'm sorry to tell you, your browser must be update" );
 				}
-			} )
+ 			})
 		</script>
 	</body>
 </html>
