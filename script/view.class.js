@@ -707,6 +707,8 @@
 
 				mapNext = $('#mapnext'); //下一页
 
+			if(that.oMap) 
+				return;
 			that.oMap = new BMap.Map( that.mapConfig.defaultMapId );
 
 			that.oMap.setMapType( that.mapConfig.defaultMapType );

@@ -9,38 +9,42 @@ var config = {
 		model = new M(),
 		mapCon = document.getElementById( 'map-container' );
 
-	//初始化地图
-	//model.initMap( c.mapConfig );
-	$.ajax({
-		url: con.initUrl.getMapData,
-		type: 'GET',
-		dataType: 'json',
-		data: { },
-		error:function(throwerror){
+		var loadcitydata = function(url){
+					//初始化地图
+					//model.initMap( c.mapConfig );
+					$.ajax({
+						url: url,
+						type: 'GET',
+						dataType: 'json',
+						data: { },
+						error:function(throwerror){
 
-			console.log(throwerror);
+							console.log(throwerror);
 
-		},
-		success:function( data ){
+						},
+						success:function( data ){
 
-			var totalData = '';
+							var totalData = '';
 
-			totalData = view.pageList( data.d );
+							totalData = view.pageList( data.d );
 
-			view.loadData(totalData);
+							view.loadData(totalData);
 
-			view.pageNext(totalData);
+							view.pageNext(totalData);
 
-			view.pagePrev(totalData);
+							view.pagePrev(totalData);
 
-			view.initMap( data.d );
+							view.initMap( data.d );
 
-		}
-	})
+						}
+					});
+		};
+
+		loadcitydata(config.initUrl.getMapData);
+	
 	   $('#city_search').typeahead({
 	      source: function(query, process) {
-	      	
-	         return cities;
+	         return Cities.cities;
 	      },
 	      matcher: function (item) {
 	      	
@@ -67,9 +71,15 @@ var config = {
 	                })
 	          }	,
 	          updater: function (item) {
+	          		
 		          	view.geocoder.getPoint(item.name,function(point){
+		          		$('#latlng').text('经纬度：'+point.lng+','+point.lat)
 					 	view.oMap.centerAndZoom( point, 12 );
 					});
+					var datafile = 'data/'+Cities.getzip(item.name)+'.json'
+
+					loadcitydata(datafile);
+
 	               return item.name
 	             }     
 	   });

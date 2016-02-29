@@ -1,4 +1,6 @@
-var cities = [
+(function(){
+var ins = {};
+ins.cities = [
 {label:"北京Beijing010",name:"北京",pinyin:"Beijing",zip:"010"},
 {label:"重庆Chongqing023",name:"重庆",pinyin:"Chongqing",zip:"023"},
 {label:"上海Shanghai021",name:"上海",pinyin:"Shanghai",zip:"021"},
@@ -953,3 +955,15 @@ var cities = [
 {label:"邹平Zouping0543",name:"邹平",pinyin:"Zouping",zip:"0543"},
 {label:"遵化Zunhua0315",name:"遵化",pinyin:"Zunhua",zip:"0315"}
 ]
+	ins.map = {};
+	ins.cities.map(function(city,idx){
+		ins.map[city.name] = city.zip
+	})
+
+	window.Cities = {
+		cities:ins.cities, 
+		getzip:function(name){
+			return ins.map[name];
+		}
+	};
+})()
