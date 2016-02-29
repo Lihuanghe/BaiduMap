@@ -43,7 +43,7 @@
 
 			defaultCity: '重庆',
 
-			defaultZoom: 9,
+			defaultZoom: 12,
 
 			defaultMapType: BMAP_NORMAL_MAP,
 
@@ -51,9 +51,9 @@
 
 			defaultPoints: new BMap.Point(106.524203,29.516936 ),
 
-			maxZoom : 17,
+			maxZoom : 19,
 
-			minZoom : 9
+			minZoom : 3
 		};
 
 		this.polygonOp ={ 
@@ -210,7 +210,6 @@
 						_that.oMap.addOverlay(oMarker);
 						_data.push(oMarker);
 						_input.value = _that.polygonToArray(_data);
-
 						oMarker.enableDragging();
 						_that.selfDragend( oMarker, _input, _data.length - 1, _data );
 					}
@@ -219,7 +218,7 @@
 
 			_that.oMap.addEventListener('click', _that.mapclickhanler )
 			}
-
+			_that.oMap.setViewport( _that.oMap.getViewport(_that._pointsToOverlay(_input.value)) );
 		},
 		checkMap: function(){
 
@@ -277,7 +276,7 @@
 
 						if( that.prevPoly ) that.oMap.removeOverlay( that.prevPoly );
 
-						that.oMap.setCenter( that.oMap.getViewport(pen.getPath()).center );
+						that.oMap.setViewport( that.oMap.getViewport(pen.getPath()) );
 
 						that.oMap.addOverlay( pen );
 
@@ -614,8 +613,31 @@
 
 			return tmpPoint;
 		},
+/*
+		movetopolygon:function(pArr){
+			var points = this._getRectPoint(pArr);
+			var distance = this._getFlatternDistance(points[0],points[1],points[2],points[3]);
+			var zoom = this._getZoomLevel(distance);
+			this.oMap.centerAndZoom( new BMap.Point((points[0] + points[2])/2,(points[1] + points[3])/2), zoom );
+		},
 		_getZoomLevel : function(distance){
-			
+			if(distance > 10000000)	return 3;
+			if(distance > 5000000) return 4;
+			if(distance > 2500000) return 5;
+			if(distance > 1000000) return 6;
+			if(distance > 500000) return 7;
+			if(distance > 250000) return 8;
+			if(distance > 125000) return 9;
+			if(distance > 100000) return 10;
+			if(distance > 50000) return 11;
+			if(distance > 25000) return 12;
+			if(distance > 10000) return 13;
+			if(distance > 5000) return 14;
+			if(distance > 2500) return 15;
+			if(distance > 1000) return 16;
+			if(distance > 500) return 17;
+			if(distance > 250) return 18;
+			if(distance > 100) return 19;
 		},
 		_getRectPoint: function(pArr){
 			var top,left, bottom,right;
@@ -637,13 +659,8 @@
 			}
 			return ;
 		},
-    /**
-     * approx distance between two points on earth ellipsoid
-     * @param {Object} lat1
-     * @param {Object} lng1
-     * @param {Object} lat2
-     * @param {Object} lng2
-     */
+
+
      _getFlatternDistance : function(lat1,lng1,lat2,lng2){
 		var EARTH_RADIUS = 6378137.0;    //单位M
 		var PI = Math.PI;
@@ -679,6 +696,7 @@
         
         return d*(1 + fl*(h1*sf*(1-sg) - h2*(1-sf)*sg));
     },
+ */
 		initMap : function( obj ){
 
 			var that = this,
@@ -700,13 +718,8 @@
 			that.oMap.enableKeyboard();
 
 			//that.overlayPoly( obj, true );
-			
-			
-
 
 			that.mapFixed( that.oMap );
-
-
 
 			that.checkMap();
 
