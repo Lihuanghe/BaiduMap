@@ -13,7 +13,7 @@ var config = {
 	//model.initMap( c.mapConfig );
 	$.ajax({
 		url: con.initUrl.getMapData,
-		type: 'POST',
+		type: 'GET',
 		dataType: 'json',
 		data: { },
 		error:function(throwerror){
