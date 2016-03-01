@@ -220,7 +220,9 @@
 
 			_that.oMap.addEventListener('click', _that.mapclickhanler )
 			}
-			_that.oMap.setViewport( _that.oMap.getViewport(_that._pointsToOverlay(_input.value)) );
+			
+			if(_input.value)
+				_that.oMap.setViewport( _that.oMap.getViewport(_that._pointsToOverlay(_input.value)));
 		},
 		checkMap: function(){
 
@@ -266,9 +268,17 @@
 
 				if(!tmpPoints){
 
-					if(!tmpPoint) return;
+					if(!tmpPoint) {
+						that.geocoder.getPoint(tmpTitle,function(point){
+							if(!!!point) return;
+							console.log('经纬度：'+point.lng+','+point.lat)
+							that.oMap.setCenter( new BMap.Point(point.lng, point.lat) );
+						});
+					}else{
+						that.oMap.setCenter( new BMap.Point(tmpPoint.split(',')[0], tmpPoint.split(',')[1]) );
+					}
 
-					that.oMap.setCenter( new BMap.Point(tmpPoint.split(',')[0], tmpPoint.split(',')[1]) );
+					
 
 				}else{
 
@@ -337,14 +347,12 @@
 				that.selfList.style.display = 'none';
 			
 				that.singleDetail.style.display = 'block';
-
-				if(tmpPoint){
-
-					that.oMap.setCenter( new BMap.Point(tmpPoint.split(',')[0], tmpPoint.split(',')[1]) );
+				var showmarker = function(lng,lat){
+					that.oMap.setCenter( new BMap.Point(lng,lat) );
 
 					that.oMap.removeOverlay(that.oMarker[tmpId]); //删除原marker,增加到编辑区临时的marker
 
-					var tmpPo = that._pointToOverlay(tmpPoint); 
+					var tmpPo = that._pointToOverlay(lng+","+lat); 
 
 						mPen = new BMap.Marker(tmpPo,{icon:that.selfIcon}); //创建编辑时的marker 
 
@@ -355,6 +363,18 @@
 					mPen.enableDragging();
 
 					that.selfDragend(mPen,schoolpoint);
+				}
+
+				if(tmpPoint){
+					showmarker(tmpPoint.split(',')[0], tmpPoint.split(',')[1]);
+
+				}else{
+					that.geocoder.getPoint(tmpTitle,function(point){
+						if(point){
+							console.log('经纬度：'+point.lng+','+point.lat)
+							showmarker(point.lng,point.lat);
+						}
+					});
 				}
 
 				if(tmpPoints){
@@ -733,7 +753,7 @@
 
 			that.oMap.enableKeyboard();
 
-			that.overlayPoly( obj, true );
+			//that.overlayPoly( obj, true );
 
 			that.mapFixed( that.oMap );
 
