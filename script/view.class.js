@@ -1,7 +1,7 @@
 (function(){
 	var view = function( obj ){
 
-		this.pageCount = 3; //每页展示数量
+		this.pageCount = 15; //每页展示数量
 
 		this.oMap = null //BMap对象
 
@@ -51,7 +51,7 @@
 
 			defaultMapId: 'map-container',
 
-			defaultPoints: new BMap.Point(106.524203,29.516936 ),
+			defaultPoints: new BMap.Point(113.638414,34.814921 ),
 
 			maxZoom : 19,
 
@@ -570,9 +570,20 @@
 						var oPoint = this._pointToOverlay( obj[i].point ),
 
 							mPen = new BMap.Marker( oPoint );
+							
+							var newInfoWindowfunc = function(title){
+								return function(){
+									this.openInfoWindow(new BMap.InfoWindow(title))
+								}
+							};
+							
+							mPen.addEventListener('mouseover',newInfoWindowfunc( obj[i].title));
+							mPen.addEventListener('mouseout',function(){
+								this.closeInfoWindow();
+							});
 
 						that.oMap.addOverlay( mPen );
-
+						
 						that.oMarker[obj[i].id] = mPen;
 					}
 				}
@@ -722,7 +733,7 @@
 
 			that.oMap.enableKeyboard();
 
-			//that.overlayPoly( obj, true );
+			that.overlayPoly( obj, true );
 
 			that.mapFixed( that.oMap );
 

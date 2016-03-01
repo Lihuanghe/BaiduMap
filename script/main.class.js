@@ -1,6 +1,6 @@
 var config = {
 	initUrl :{
-		getMapData : 'service/getData.json'
+		getMapData : 'data/0371.json'
 	},
 };
 (function( con, $, V, C, M){
