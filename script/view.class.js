@@ -753,7 +753,7 @@
 
 			that.oMap.enableKeyboard();
 
-			//that.overlayPoly( obj, true );
+			that.overlayPoly( obj, true );
 
 			that.mapFixed( that.oMap );
 
